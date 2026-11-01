@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Estimate Ontario and Toronto land transfer taxes when buying a home. Free Canadian homebuyer calculator.">
+<title>Ontario Land Transfer Tax Calculator | FlowPilot Home Tools</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#f5f7fa;color:#182536}
+header{background:#10233e;color:white;padding:30px 20px}
+header>div,main{max-width:850px;margin:auto}
+nav a{color:#9bd9d3;margin-right:16px}
+h1{font-size:clamp(27px,5vw,40px)}
+main{padding:30px 20px}
+section{background:white;padding:25px;margin-bottom:20px;border:1px solid #e0e7ed;border-radius:16px}
+label{display:block;font-weight:700;margin:16px 0 8px}
+input[type=number]{width:100%;padding:14px;font:inherit;border:1px solid #bac9d6;border-radius:9px}
+button{background:#007f76;color:white;border:0;border-radius:10px;padding:14px 20px;font-weight:700;margin-top:20px}
+.amount{color:#007f76;font-size:clamp(28px,6vw,42px);font-weight:800}
+p{line-height:1.7;color:#526277}
+.error{color:#b42318;font-weight:700}
+</style>
+</head>
+<body>
+<header><div>
+<nav>
+<a href="index.html">Mortgage</a>
+<a href="down-payment.html">Down Payment</a>
+</nav>
+<p style="color:#9bd9d3">FLOWPILOT HOME TOOLS</p>
+<h1>Ontario Land Transfer Tax Calculator</h1>
+<p style="color:white">Estimate land transfer taxes when buying a home in Ontario.</p>
+</div></header>
+
+<main>
+<section>
+<h2>Property details</h2>
+<label for="price">Purchase price (CAD)</label>
+<input id="price" type="number" min="1" value="650000">
+
+<label>
+<input id="toronto" type="checkbox" checked>
+Property is in the City of Toronto
+</label>
+
+<button onclick="calculate()">Calculate taxes</button>
+<p id="error" class="error" role="alert"></p>
+<div id="results" aria-live="polite"></div>
+</section>
+
+<section>
+<h2>How land transfer tax works</h2>
+<p>Ontario charges land transfer tax using graduated rates based on the property's purchase price.</p>
+<p>Properties located in the City of Toronto are generally subject to an additional municipal land transfer tax.</p>
+<p>This simplified calculator excludes first-time buyer rebates, special exemptions, non-resident taxes, and other adjustments. Toronto residential purchases of $3 million or more require additional municipal tax brackets and are not supported by this estimator.</p>
+<p>Verify rates and eligibility using the official <a href="https://www.ontario.ca/document/land-transfer-tax">Ontario guidance</a> and <a href="https://www.toronto.ca/services-payments/property-taxes-utilities/municipal-land-transfer-tax-mltt/">Toronto municipal guidance</a>.</p>
+</section>
+</main>
+
+<script>
+function graduatedTax(price, brackets) {
+  let total = 0;
+  let previous = 0;
+
+  for (const [limit, rate] of brackets) {
+    const portion = Math.min(price, limit) - previous;
+    if (portion > 0) total += portion * rate;
+    if (price <= limit) break;
+    previous = limit;
+  }
+  return total;
+}
+
+function calculate() {
+  const price = Number(document.getElementById("price").value);
+  const toronto = document.getElementById("toronto").checked;
+  const error = document.getElementById("error");
+  const results = document.getElementById("results");
+
+  if (!Number.isFinite(price) || price <= 0) {
+    error.textContent = "Enter a valid purchase price.";
+    results.innerHTML = "";
+    return;
+  }
+
+  if (toronto && price >= 3000000) {
+    error.textContent = "Toronto purchases of $3 million or more are not supported by this simplified estimator.";
+    results.innerHTML = "";
+    return;
+  }
+
+  error.textContent = "";
+
+  const brackets = [
+    [55000, 0.005],
+    [250000, 0.01],
+    [400000, 0.015],
+    [2000000, 0.02],
+    [Infinity, 0.025]
+  ];
+
+  const ontarioTax = graduatedTax(price, brackets);
+  const torontoTax = toronto ? graduatedTax(price, brackets) : 0;
+  const total = ontarioTax + torontoTax;
+
+  const money = n => n.toLocaleString("en-CA", {
+    style: "currency",
+    currency: "CAD"
+  });
+
+  results.innerHTML = `
+    <h2>Estimated land transfer tax</h2>
+    <div class="amount">${money(total)}</div>
+    <p>Ontario tax: <strong>${money(ontarioTax)}</strong></p>
+    <p>Toronto municipal tax: <strong>${money(torontoTax)}</strong></p>
+    <p>Before rebates or other applicable taxes.</p>
+  `;
+}
+
+calculate();
+</script>
+</body>
+</html>
