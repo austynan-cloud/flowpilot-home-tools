@@ -1,1 +1,102 @@
 
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Free Canadian home down payment calculator. Estimate your minimum down payment and mortgage amount.">
+  <title>Canadian Down Payment Calculator | FlowPilot Home Tools</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f5f7fa; color: #182536; }
+    header { background: #10233e; color: white; padding: 30px 20px; }
+    header div { max-width: 850px; margin: auto; }
+    nav a { color: #9bd9d3; margin-right: 16px; }
+    h1 { font-size: clamp(27px, 5vw, 40px); }
+    main { max-width: 850px; margin: 30px auto; padding: 0 20px; }
+    section { background: white; padding: 26px; margin-bottom: 20px; border: 1px solid #e0e7ed; border-radius: 16px; }
+    label { display: block; font-weight: 700; margin-bottom: 10px; }
+    input { width: 100%; padding: 14px; font: inherit; border: 1px solid #bac9d6; border-radius: 9px; }
+    button { margin-top: 20px; background: #007f76; color: white; border: 0; padding: 14px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    .amount { color: #007f76; font-size: clamp(28px, 6vw, 42px); font-weight: 800; }
+    p { line-height: 1.7; color: #526277; }
+    .error { color: #b42318; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <nav><a href="index.html">Mortgage Calculator</a></nav>
+      <p style="color:#9bd9d3">FLOWPILOT HOME TOOLS</p>
+      <h1>Canadian Down Payment Calculator</h1>
+      <p style="color:white">Find out how much you may need to put down on a home in Canada.</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Calculate your down payment</h2>
+      <label for="price">Home purchase price (CAD)</label>
+      <input id="price" type="number" min="1" value="650000">
+      <button onclick="calculate()">Calculate down payment</button>
+      <p id="error" class="error" role="alert"></p>
+      <div id="results" aria-live="polite"></div>
+    </section>
+
+    <section>
+      <h2>How minimum down payments work in Canada</h2>
+      <p>For eligible homes below $500,000, the minimum down payment is generally 5%.</p>
+      <p>For homes costing $500,000 to less than $1.5 million, the minimum is 5% of the first $500,000 plus 10% of the remaining amount.</p>
+      <p>For homes costing $1.5 million or more, a down payment of at least 20% is generally required.</p>
+      <p>A down payment below 20% commonly requires mortgage default insurance, subject to eligibility. Lenders may require a larger down payment.</p>
+    </section>
+
+    <section>
+      <h2>Important information</h2>
+      <p>This calculator provides educational estimates, not mortgage approval or financial advice. It excludes mortgage insurance premiums, closing costs, taxes, and other expenses. Confirm current requirements with a qualified lender.</p>
+    </section>
+  </main>
+
+  <script>
+    function calculate() {
+      const price = Number(document.getElementById("price").value);
+      const error = document.getElementById("error");
+      const results = document.getElementById("results");
+
+      if (!Number.isFinite(price) || price <= 0) {
+        error.textContent = "Please enter a valid home price.";
+        results.innerHTML = "";
+        return;
+      }
+
+      error.textContent = "";
+
+      let downPayment;
+      if (price < 500000) {
+        downPayment = price * 0.05;
+      } else if (price < 1500000) {
+        downPayment = 25000 + (price - 500000) * 0.10;
+      } else {
+        downPayment = price * 0.20;
+      }
+
+      const mortgage = price - downPayment;
+      const percent = (downPayment / price) * 100;
+      const money = n => n.toLocaleString("en-CA", {
+        style: "currency",
+        currency: "CAD"
+      });
+
+      results.innerHTML = `
+        <h2>Estimated minimum down payment</h2>
+        <div class="amount">${money(downPayment)}</div>
+        <p>Down payment percentage: <strong>${percent.toFixed(2)}%</strong></p>
+        <p>Mortgage before insurance: <strong>${money(mortgage)}</strong></p>
+      `;
+    }
+
+    calculate();
+  </script>
+</body>
+</html>
+
