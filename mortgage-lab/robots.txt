@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://flowpilot-mortgage-lab.netlify.app/sitemap.xml
