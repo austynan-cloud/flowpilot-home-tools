@@ -42,7 +42,7 @@ body{margin:0}
 a{color:var(--teal-deep)}
 a:hover{color:var(--copper)}
 :focus-visible{outline:3px solid #c47b4a;outline-offset:3px}
-.skip{position:absolute;left:12px;top:-40px;background:#fff;padding:8px 12px;z-index:5}
+.skip{position:absolute;left:12px;top:-120px;background:#fff;padding:8px 12px;z-index:5}
 .skip:focus{top:12px}
 .wrap{width:min(1080px,calc(100% - 32px));margin:auto}
 header{
@@ -225,6 +225,8 @@ ul.clean li{margin:4px 0}
 .steps p{margin:0;color:#e7f0ed}
 .pay .fine{margin:16px 0 0;color:#c5d9d3;font-size:16px}
 .pay a{color:#f3d2b4}
+.pay .btn{background:#e7b089;color:#1c2421;margin-top:16px}
+.pay .btn:hover{background:#f3d2b4;color:#1c2421}
 .contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:start}
 form{
   background:var(--card);
@@ -286,6 +288,7 @@ footer{
       <span><strong>FlowLyon</strong><small>flowlyon.com · Toronto &amp; the GTA</small></span>
     </a>
     <nav aria-label="Primary">
+      <a href="content/">Start an order</a>
       <a href="#tools">Free tools</a>
       <a href="#offers">What you can buy</a>
       <a href="#pay">How to pay</a>
@@ -299,22 +302,23 @@ footer{
       <div>
         <p class="kicker">Austin (Lyòn Austyn) · Toronto &amp; the GTA</p>
         <h1>FlowLyon</h1>
-        <p class="lede">A Toronto and GTA desk for free homebuyer calculators and small writing orders. FlowPilot Mortgage Lab and Home Tools stay in your browser, with no sign-in. The Express Content Pack is paid by Interac e-Transfer.</p>
+        <p class="lede">A Toronto and GTA desk for free homebuyer calculators and small writing orders. FlowPilot Mortgage Lab and Home Tools stay in your browser, with no sign-in. The Express Content Pack is CA$25 by Interac e-Transfer. The order page shows what you get, how to pay, and where to send the brief. You post the writing yourself.</p>
         <div class="actions">
-          <a class="btn" href="#tools">Use the free tools</a>
-          <a class="btn ghost" href="content/">Express Content Pack · CA$25</a>
+          <a class="btn" href="content/">Start an order · CA$25</a>
+          <a class="btn ghost" href="#tools">Use the free tools</a>
         </div>
       </div>
       <aside class="receipt" aria-labelledby="pay-now">
         <p class="kicker" id="pay-now">Ready to order</p>
         <p class="price">CA$25 <span>Express Content Pack</span></p>
-        <p>Five captions and five post ideas, with one revision. Pay from your bank, then email the brief.</p>
+        <p>Five captions and five post ideas, with one revision. You post them yourself. Pay from your bank, then send the brief on the order page.</p>
         <dl>
           <div><dt>Send to</dt><dd>austyn.an@icloud.com</dd></div>
           <div><dt>Amount</dt><dd>CA$25</dd></div>
           <div><dt>Memo</dt><dd class="memo">YourName Content Pack</dd></div>
           <div><dt>Then email</dt><dd><a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a></dd></div>
         </dl>
+        <p><a class="btn" href="content/">Full offer / start an order</a></p>
       </aside>
     </div>
   </div>
@@ -393,9 +397,10 @@ footer{
             <li>Written for your platform, audience, topics, and tone</li>
             <li>One revision included</li>
             <li>Delivery target within 24 hours after the Interac transfer clears and the brief is complete, subject to capacity</li>
+            <li>You post the content on your own account. No passwords or account access.</li>
           </ul>
-          <p class="note">On the content page this is FlowPilot AI’s Express Social Content Pack. A real-estate newsletter pilot is separate: scope and price are agreed by email before any work starts.</p>
-          <p><a class="btn" href="content/">Read the content pack page</a></p>
+          <p class="note">On the content page this is FlowPilot AI’s Express Social Content Pack. A real-estate newsletter pilot is separate: scope and price are agreed by email before any work starts. This page does not list a newsletter price.</p>
+          <p><a class="btn" href="content/">Full offer / start an order</a></p>
         </article>
         <aside class="side">
           <h3>Student writing</h3>
@@ -433,10 +438,11 @@ footer{
           </li>
           <li>
             <b>3</b>
-            <p>Email <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a> with your brief and the email address where the work should be delivered.</p>
+            <p>On the <a href="content/">order page</a>, send the brief and the delivery email to <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a>.</p>
           </li>
         </ol>
-        <p class="fine">Work starts when the transfer arrives and the brief is in. Full offer details, the inquiry form, and the real-estate newsletter conversation are on the <a href="content/">content page</a>. Student items use the same Interac address; name the item in the memo and in the email.</p>
+        <p class="fine">Work starts when the transfer clears and the brief is complete. The <a href="content/">full offer / start an order</a> page has the sample writing, the brief form, and the newsletter note. The newsletter has no set price. Student items use the same Interac address; name the item in the memo and in the email.</p>
+        <p><a class="btn" href="content/">Full offer / start an order</a></p>
       </div>
     </div>
   </section>
@@ -447,7 +453,7 @@ footer{
         <p class="kicker">04 — Contact</p>
         <h2>Write to FlowLyon.</h2>
         <p class="lede" style="font-size:18px">Email <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a>. The form opens a message to FlowLyon in your email app. Nothing on this page is saved on a server.</p>
-        <p class="note">Use the form for a question, a brief, or to say which student item you want. Leave out passwords, card numbers, and banking sign-in details.</p>
+        <p class="note">For a complete Express Content Pack brief — platform, GTA area, audience, tone, and three topics — use the <a href="content/">order page</a>. This form is for a short question or a student item. Leave out passwords, card numbers, and banking sign-in details.</p>
       </div>
       <form id="contact-form" action="mailto:flowpilot27@gmail.com" method="post" enctype="text/plain">
         <label>Your name
@@ -468,7 +474,7 @@ footer{
           </select>
         </label>
         <label>Message
-          <textarea name="message" maxlength="2000" required placeholder="For a content pack: your business, audience, platform, topics, and tone. For a student item: what you need and where to send it."></textarea>
+          <textarea name="message" maxlength="2000" required placeholder="For a student item: what you need and where to send it. For the content pack, send the full brief from the order page."></textarea>
         </label>
         <button class="btn" type="submit">Open this message in my email</button>
         <p class="form-note" id="feedback" role="status">If your email app does not open, write directly to flowpilot27@gmail.com.</p>
