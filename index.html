@@ -1,23 +1,519 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Free Canadian mortgage payment calculator with amortization, down payment, and total interest estimates."><title>Canadian Mortgage Payment Calculator | FlowPilot Home Tools</title><style>:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#182536;background:#f5f7fa}*{box-sizing:border-box}body{margin:0}header{background:#10233e;color:white;padding:24px max(20px,calc((100vw - 1040px)/2))}header small{color:#9bd9d3}main{max-width:1040px;margin:auto;padding:30px 20px}.layout{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{background:white;border:1px solid #e0e7ed;border-radius:16px;padding:25px;box-shadow:0 8px 26px #142f4b0a}h1{font-size:clamp(28px,4vw,40px);margin:8px 0}h2{font-size:22px}p{line-height:1.65;color:#526277}label{display:block;margin:17px 0 7px;font-weight:650}input,select{width:100%;border:1px solid #bac9d6;border-radius:9px;padding:13px;font:inherit}input:focus,select:focus{outline:3px solid #a9e8de}button{background:#007f76;color:white;border:0;border-radius:10px;padding:13px 18px;font-weight:700;cursor:pointer;margin-top:20px}button:hover{background:#00675f}.amount{font-size:40px;font-weight:800;color:#007f76;margin:5px 0 20px}.metric{padding:14px 0;border-bottom:1px solid #e6edf1;display:flex;justify-content:space-between;gap:12px}.metric strong{text-align:right}.bar{display:flex;height:18px;overflow:hidden;border-radius:12px;margin-top:25px}.bar span:first-child{background:#007f76}.bar span:last-child{background:#f0b55a;flex:1}.legend{font-size:13px;color:#526277;margin-top:10px}.disclaimer{font-size:13px}.footer{margin-top:28px;font-size:13px;color:#637387}.error{color:#b42318;font-weight:600;min-height:22px}@media(max-width:750px){.layout{grid-template-columns:1fr}.panel{padding:20px}}</style></head><body><header><small>FLOWPILOT HOME TOOLS</small><h1>Canadian Mortgage Calculator</h1><div>Estimate your mortgage payment and borrowing costs in seconds.</div></header><main><div class="layout"><section class="panel"><h2>Your mortgage details</h2><label for="price">Home price (CAD)</label><input id="price" type="number" min="1" value="650000"><label for="down">Down payment (CAD)</label><input id="down" type="number" min="0" value="130000"><label for="rate">Annual interest rate (%)</label><input id="rate" type="number" min="0" max="100" step="0.01" value="4.5"><label for="years">Amortization period (years)</label><select id="years"><option>10</option><option>15</option><option>20</option><option selected>25</option><option>30</option></select><label for="frequency">Payment frequency</label><select id="frequency"><option value="12">Monthly</option><option value="26">Biweekly (regular)</option><option value="52">Weekly (regular)</option></select><button id="calculate">Calculate payment</button><div class="error" id="error" role="alert"></div></section><section class="panel" aria-live="polite"><h2>Estimated payment</h2><div id="payment" class="amount">—</div><div class="metric"><span>Mortgage principal</span><strong id="principal">—</strong></div><div class="metric"><span>Total interest over amortization</span><strong id="interest">—</strong></div><div class="metric"><span>Total principal + interest</span><strong id="total">—</strong></div><div class="metric"><span>Down payment</span><strong id="downDisplay">—</strong></div><div class="bar" aria-label="Principal and interest breakdown"><span id="principalBar" style="width:50%"></span><span></span></div><div class="legend">■ Teal: principal &nbsp; ■ Gold: interest</div><p class="disclaimer">Estimates use Canadian nominal annual interest compounded semi-annually, converted to the selected regular payment frequency. They exclude mortgage default insurance, property tax, utilities, maintenance, and closing costs. Actual lender payments may differ. A 30-year amortization is not available to every borrower. This is an educational tool, not a lending quote or financial advice.</p></section></div><section class="panel" style="margin-top:22px"><h2>How this calculator works</h2><p>The calculator subtracts your down payment from the home price to estimate your mortgage principal. It converts the annual quoted rate using Canadian semi-annual compounding, then calculates an equal payment for the chosen amortization and payment frequency. It assumes the interest rate stays unchanged throughout the amortization, which is not how most Canadian mortgages work after renewal.</p><h2>Frequently asked questions</h2><h3>Does this include mortgage insurance?</h3><p>No. Mortgage default insurance may be required depending on the down payment, purchase price, and eligibility. Ask your lender for a complete quote.</p><h3>Are biweekly payments accelerated?</h3><p>No. The biweekly option shows 26 regular payments per year. Accelerated biweekly plans use a different calculation and can pay down principal faster.</p><h3>Can I rely on this for a purchase decision?</h3><p>Use it for rough planning only. Confirm financing terms, qualification rules, and total housing costs with a qualified professional.</p></section><section class="panel" style="margin-top:22px" aria-label="Services for real estate and small businesses"><h2>Need help preparing your business content?</h2><p>FlowPilot AI now has an introductory CAD $25 pack of five tailored captions and five post ideas, plus custom real-estate newsletter pilots by discussion. One revision is included in the express pack. Checkout is not available yet, but inquiries are welcome.</p><a href="content/index.html" style="display:inline-block;padding:12px 18px;border-radius:10px;background:#007f76;color:white;text-decoration:none;font-weight:700">Explore FlowPilot AI content services</a></section><section class="panel" style="margin-top:22px;border-color:#a4e4da;background:linear-gradient(120deg,#eefaf6,#f4fbfe)"><span style="font-size:11px;font-weight:850;letter-spacing:.12em;color:#0b827a">NEW · FREE CANADIAN MORTGAGE LAB</span><h2 style="margin:10px 0">Plan the whole purchase, not just your payment.</h2><p>Explore mortgage insurance, Ontario and Toronto closing taxes, cash to close, rate-change scenarios, accelerated payments and an exportable payoff schedule. Private by design — no login required.</p><a href="mortgage-lab/" style="display:inline-block;padding:13px 18px;border-radius:10px;background:#007f76;color:white;text-decoration:none;font-weight:800">Launch the new Mortgage Lab ↗</a></section><div class="footer">© <span id="year"></span> FlowPilot Home Tools · Free educational calculator · Contact: flowpilot27@gmail.com</div></main><script>const $=id=>document.getElementById(id);const cad=x=>new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:2}).format(x);function calculate(){const price=Number($('price').value),down=Number($('down').value),rate=Number($('rate').value),years=Number($('years').value),f=Number($('frequency').value);if(!Number.isFinite(price)||!Number.isFinite(down)||!Number.isFinite(rate)||price<=0||down<0||down>=price||rate<0||rate>100){$('error').textContent='Enter a valid home price, down payment below the home price, and interest rate between 0% and 100%.';return}$('error').textContent='';const p=price-down,n=years*f,r=Math.pow(1+rate/200,2/f)-1;const payment=r===0?p/n:p*r/(1-Math.pow(1+r,-n));const total=payment*n,interest=Math.max(0,total-p);$('payment').textContent=cad(payment)+' / '+({12:'month',26:'2 weeks',52:'week'}[f]);$('principal').textContent=cad(p);$('interest').textContent=cad(interest);$('total').textContent=cad(total);$('downDisplay').textContent=cad(down);$('principalBar').style.width=(100*p/total)+'%'}$('calculate').addEventListener('click',calculate);['price','down','rate','years','frequency'].forEach(id=>$(id).addEventListener('change',calculate));$('year').textContent=new Date().getFullYear();calculate();</script>
-<section style="max-width:1040px;margin:25px auto;padding:20px">
-  <h2>Explore our free homebuyer tools</h2><div style="background:#0b3343;color:white;border:1px solid #1aaea5;border-radius:18px;padding:24px;margin:15px 0 22px"><span style="font-size:12px;letter-spacing:.13em;color:#8df5e3;font-weight:800">NEW · CANADIAN MORTGAGE LAB</span><h3 style="margin:12px 0 6px;font-size:25px;color:white">Know the whole move — not just the payment.</h3><p style="color:#cbe1e5">Compare mortgage insurance, Toronto closing costs, accelerated payments, rate changes, prepayment savings, repayment charts and a downloadable schedule.</p><a href="mortgage-lab.html" style="display:inline-block;padding:13px 20px;margin-top:8px;border-radius:11px;background:#11d1b6;color:#062f38;text-decoration:none;font-weight:850">Open Mortgage Lab →</a></div>
-  <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
-
-    <a href="index.html" style="padding:22px;background:white;border:1px solid #ddd;border-radius:14px;color:#007f76">
-      <strong>Mortgage Calculator</strong>
-      <p>Estimate your mortgage payments and interest.</p>
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="FlowLyon is a Toronto and GTA site from Austin (Lyòn Austyn). Use FlowPilot Mortgage Lab and Home Tools, or order the Express Content Pack by Interac e-Transfer.">
+<meta name="theme-color" content="#14262c">
+<meta property="og:site_name" content="FlowLyon">
+<meta property="og:title" content="FlowLyon · Toronto home tools and writing orders">
+<meta property="og:description" content="FlowLyon lists FlowPilot Mortgage Lab, Home Tools, and the Express Content Pack. Pay the content pack by Interac e-Transfer.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://austynan-cloud.github.io/flowpilot-home-tools/">
+<title>FlowLyon · Toronto home tools and writing orders</title>
+<link rel="canonical" href="https://austynan-cloud.github.io/flowpilot-home-tools/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314262c'/%3E%3Cpath d='M7 23c5-8 7-8 9-8s4 0 9-8' fill='none' stroke='%23d7f3ec' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='7' cy='23' r='2' fill='%23e7b089'/%3E%3Ccircle cx='25' cy='7' r='2' fill='%23d7f3ec'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,640&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2421;
+  --muted:#3f4e48;
+  --paper:#f3efe6;
+  --card:#fffdf8;
+  --line:#ddd4c4;
+  --teal:#0b5e56;
+  --teal-deep:#084840;
+  --mint:#e7f3ef;
+  --copper:#8a4b32;
+  --navy:#14262c;
+  --cream:#f7f1e4;
+  --serif:"Fraunces","Iowan Old Style",Palatino,Georgia,serif;
+  --sans:"Source Sans 3","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  font-family:var(--sans);
+  font-size:18px;
+  line-height:1.55;
+}
+*{box-sizing:border-box}
+body{margin:0}
+a{color:var(--teal-deep)}
+a:hover{color:var(--copper)}
+:focus-visible{outline:3px solid #c47b4a;outline-offset:3px}
+.skip{position:absolute;left:12px;top:-40px;background:#fff;padding:8px 12px;z-index:5}
+.skip:focus{top:12px}
+.wrap{width:min(1080px,calc(100% - 32px));margin:auto}
+header{
+  background:var(--navy);
+  color:#f6f1e6;
+  border-bottom:4px solid #e7b089;
+}
+.bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px 28px;
+  flex-wrap:wrap;
+  padding:16px 0;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:inherit;
+  text-decoration:none;
+}
+.brand svg{display:block}
+.brand strong{font-family:var(--serif);font-size:22px;font-weight:640;letter-spacing:-.03em}
+.brand small{display:block;color:#c9ddd7;font-size:13px;letter-spacing:.04em}
+nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+nav a{color:#f6f1e6;text-decoration:none;font-weight:600;font-size:16px}
+nav a:hover{color:#e7b089}
+.hero{padding:54px 0 28px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:start}
+.kicker{
+  margin:0 0 12px;
+  color:var(--copper);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+h1,h2,h3{font-family:var(--serif);font-weight:640;letter-spacing:-.03em;line-height:1.15}
+h1{font-size:clamp(36px,5vw,58px);margin:0 0 16px}
+.lede{font-size:20px;color:var(--muted);margin:0 0 22px;max-width:42rem}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{
+  display:inline-block;
+  background:var(--teal);
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  border-radius:999px;
+  padding:12px 18px;
+  border:0;
+  cursor:pointer;
+  font:inherit;
+  font-weight:700;
+}
+.btn:hover{background:var(--teal-deep);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:#fff}
+.receipt{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px 22px 18px;
+  box-shadow:0 18px 40px rgba(28,36,32,.06);
+}
+.receipt .kicker{margin-bottom:6px}
+.price{font-family:var(--serif);font-size:42px;margin:0;letter-spacing:-.04em}
+.price span{font-family:var(--sans);font-size:16px;color:var(--muted);letter-spacing:0;font-weight:600}
+.receipt p{margin:10px 0;color:var(--muted)}
+.receipt dl{margin:14px 0 0;display:grid;gap:8px}
+.receipt div{display:grid;grid-template-columns:88px 1fr;gap:8px;font-size:16px}
+.receipt dt{color:var(--muted)}
+.receipt dd{margin:0;font-weight:700}
+code,.memo{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
+.facts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  margin:8px 0 10px;
+}
+.facts article{background:var(--cream);padding:16px 18px}
+.facts h2,.facts .label{font-family:var(--sans);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin:0 0 6px;font-weight:700}
+.facts p{margin:0;font-size:16px}
+section{padding:28px 0}
+.section-head{max-width:44rem;margin-bottom:18px}
+h2{font-size:clamp(28px,3vw,38px);margin:0 0 8px}
+.section-head p{margin:0;color:var(--muted)}
+.tool-feature{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:22px;
+  background:var(--navy);
+  color:#f4efe6;
+  border-radius:20px;
+  padding:26px;
+  margin-bottom:16px;
+}
+.tool-feature h3{font-size:30px;margin:8px 0}
+.tool-feature p{color:#d5e4df;margin:0 0 14px}
+.tool-feature a{color:#f4efe6}
+.tool-feature .btn{background:#e7b089;color:#1c2421}
+.tool-feature .btn:hover{background:#f3d2b4;color:#1c2421}
+.guides{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.guides a{
+  display:block;
+  background:#1d363d;
+  color:#f4efe6;
+  text-decoration:none;
+  border-radius:12px;
+  padding:14px 16px;
+  font-weight:650;
+}
+.guides a span{display:block;font-weight:400;color:#c5d9d3;font-size:15px;margin-top:4px}
+.guides a:hover{background:#27464e;color:#f4efe6}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.card h3{font-size:22px;margin:0}
+.card p{margin:0;color:var(--muted);font-size:16px;flex:1}
+.card a.more{font-weight:700;text-decoration:none}
+.card a.more:hover{text-decoration:underline}
+.offer-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+.offer,.side{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+}
+.offer h3{font-size:28px;margin:6px 0}
+.tag{
+  display:inline-block;
+  background:var(--mint);
+  color:var(--teal-deep);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-radius:999px;
+  padding:4px 10px;
+}
+ul.clean{margin:8px 0 14px;padding-left:18px;color:var(--muted)}
+ul.clean li{margin:4px 0}
+.side h3{font-size:24px;margin:0 0 8px}
+.menu{width:100%;border-collapse:collapse;font-size:16px}
+.menu th,.menu td{text-align:left;padding:9px 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+.menu td:last-child,.menu th:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.menu th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.note{color:var(--muted);font-size:16px}
+.pay{
+  background:var(--navy);
+  color:#f6f1e6;
+  border-radius:22px;
+  padding:28px;
+}
+.pay h2{margin-bottom:8px}
+.pay .intro{color:#d5e4df;margin:0 0 18px;max-width:46rem}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0;padding:0;list-style:none}
+.steps li{background:#1d363d;border-radius:14px;padding:16px}
+.steps b{
+  display:inline-grid;
+  place-items:center;
+  width:28px;height:28px;
+  border-radius:50%;
+  background:#e7b089;
+  color:#1c2421;
+  font-size:14px;
+  margin-bottom:8px;
+}
+.steps p{margin:0;color:#e7f0ed}
+.pay .fine{margin:16px 0 0;color:#c5d9d3;font-size:16px}
+.pay a{color:#f3d2b4}
+.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:start}
+form{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+  display:grid;
+  gap:12px;
+}
+label{font-weight:700;font-size:15px}
+input,select,textarea{
+  display:block;
+  width:100%;
+  margin-top:6px;
+  border:1px solid #cabbab;
+  border-radius:10px;
+  padding:11px 12px;
+  font:inherit;
+  color:var(--ink);
+  background:#fff;
+}
+textarea{min-height:120px;resize:vertical}
+.form-note{margin:0;color:var(--muted);font-size:15px}
+footer{
+  background:#efe8da;
+  border-top:1px solid var(--line);
+  padding:28px 0 36px;
+  color:var(--muted);
+  font-size:15px;
+}
+.foot{
+  display:flex;
+  justify-content:space-between;
+  gap:18px 32px;
+  flex-wrap:wrap;
+}
+.socials{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0}
+.socials a{font-weight:700}
+.legal{max-width:62ch}
+@media(max-width:860px){
+  .hero-grid,.tool-feature,.offer-grid,.contact-grid,.facts,.cards,.steps{grid-template-columns:1fr}
+  .hero{padding-top:32px}
+  h1{font-size:34px}
+  .tool-feature,.pay{padding:20px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg width="36" height="36" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#1d363d"/>
+        <path d="M7 23c5-8 7-8 9-8s4 0 9-8" fill="none" stroke="#d7f3ec" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="7" cy="23" r="2.1" fill="#e7b089"/>
+        <circle cx="25" cy="7" r="2.1" fill="#d7f3ec"/>
+      </svg>
+      <span><strong>FlowLyon</strong><small>flowlyon.com · Toronto &amp; the GTA</small></span>
     </a>
-
-    <a href="down-payment.html" style="padding:22px;background:white;border:1px solid #ddd;border-radius:14px;color:#007f76">
-      <strong>Down Payment Calculator</strong>
-      <p>Find your estimated minimum down payment.</p>
-    </a>
-
-    <a href="land-transfer-tax.html" style="padding:22px;background:white;border:1px solid #ddd;border-radius:14px;color:#007f76">
-      <strong>Ontario Land Transfer Tax</strong>
-      <p>Estimate provincial and Toronto transfer taxes.</p>
-    </a>
-
+    <nav aria-label="Primary">
+      <a href="#tools">Free tools</a>
+      <a href="#offers">What you can buy</a>
+      <a href="#pay">How to pay</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </div>
-</section>
-</body></html>
+</header>
+<main id="content">
+  <div class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <p class="kicker">Austin (Lyòn Austyn) · Toronto &amp; the GTA</p>
+        <h1>FlowLyon</h1>
+        <p class="lede">A Toronto and GTA desk for free homebuyer calculators and small writing orders. FlowPilot Mortgage Lab and Home Tools stay in your browser, with no sign-in. The Express Content Pack is paid by Interac e-Transfer.</p>
+        <div class="actions">
+          <a class="btn" href="#tools">Use the free tools</a>
+          <a class="btn ghost" href="content/">Express Content Pack · CA$25</a>
+        </div>
+      </div>
+      <aside class="receipt" aria-labelledby="pay-now">
+        <p class="kicker" id="pay-now">Ready to order</p>
+        <p class="price">CA$25 <span>Express Content Pack</span></p>
+        <p>Five captions and five post ideas, with one revision. Pay from your bank, then email the brief.</p>
+        <dl>
+          <div><dt>Send to</dt><dd>austyn.an@icloud.com</dd></div>
+          <div><dt>Amount</dt><dd>CA$25</dd></div>
+          <div><dt>Memo</dt><dd class="memo">YourName Content Pack</dd></div>
+          <div><dt>Then email</dt><dd><a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a></dd></div>
+        </dl>
+      </aside>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="facts">
+      <article>
+        <p class="label">Who</p>
+        <p>FlowLyon is run by Austin (Lyòn Austyn) from Toronto and the Greater Toronto Area.</p>
+      </article>
+      <article>
+        <p class="label">Free</p>
+        <p>FlowPilot Mortgage Lab and the Home Tools calculators on this site. No account and no card.</p>
+      </article>
+      <article>
+        <p class="label">Paid</p>
+        <p>Interac e-Transfer only, sent to austyn.an@icloud.com.</p>
+      </article>
+    </div>
+  </div>
+
+  <section id="tools">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">01 — Free tools</p>
+        <h2>Plan a Canadian home purchase without creating an account.</h2>
+        <p>FlowPilot Mortgage Lab opens on its own site. The three calculators below are FlowPilot Home Tools published here. They are educational estimates, not a mortgage approval, a lender quote, or tax advice. Numbers stay in your browser.</p>
+      </div>
+      <article class="tool-feature">
+        <div>
+          <p class="kicker" style="color:#e7b089">FlowPilot Mortgage Lab</p>
+          <h3>The whole purchase, not only the payment.</h3>
+          <p>Estimate mortgage payments with Canadian semi-annual compounding, mortgage insurance, Ontario and Toronto land transfer tax, cash to close, a qualifying-rate scenario, accelerated payments, and a downloadable schedule.</p>
+          <a class="btn" href="https://flowpilot-mortgage-lab.netlify.app/">Open Mortgage Lab</a>
+          <p class="note" style="color:#c5d9d3;margin-top:12px">The same planner is also published with this site at <a href="mortgage-lab/">mortgage-lab/</a>.</p>
+        </div>
+        <div class="guides">
+          <a href="https://flowpilot-mortgage-lab.netlify.app/guides/ontario-home-buying-costs/">Ontario home buying costs<span>Cash beyond the down payment.</span></a>
+          <a href="https://flowpilot-mortgage-lab.netlify.app/guides/canadian-mortgage-stress-test/">Mortgage stress test<span>How the qualifying rate is described.</span></a>
+        </div>
+      </article>
+      <div class="cards">
+        <article class="card">
+          <h3>Mortgage payment</h3>
+          <p>Payment, principal, and total interest from a home price, down payment, rate, and amortization. Monthly, regular biweekly, or weekly.</p>
+          <a class="more" href="mortgage-calculator.html">Open the payment calculator</a>
+        </article>
+        <article class="card">
+          <h3>Down payment</h3>
+          <p>A minimum down payment estimate for a Canadian purchase price, and the mortgage amount before insurance.</p>
+          <a class="more" href="down-payment.html">Open the down payment calculator</a>
+        </article>
+        <article class="card">
+          <h3>Land transfer tax</h3>
+          <p>Ontario land transfer tax, plus Toronto’s municipal tax when the home is in the city. Rebates are not included.</p>
+          <a class="more" href="land-transfer-tax.html">Open the land transfer tax calculator</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="offers">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">02 — What you can buy</p>
+        <h2>Small writing orders, paid by Interac.</h2>
+        <p>Send the e-Transfer from your bank to austyn.an@icloud.com, then email <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a> with what you need and where it should be delivered. Do not send card numbers or passwords.</p>
+      </div>
+      <div class="offer-grid">
+        <article class="offer">
+          <span class="tag">Available now</span>
+          <h3>Express Content Pack</h3>
+          <p class="price">CA$25</p>
+          <ul class="clean">
+            <li>Five social captions and five post ideas for your business</li>
+            <li>Written for your platform, audience, topics, and tone</li>
+            <li>One revision included</li>
+            <li>Delivery target within 24 hours after the Interac transfer clears and the brief is complete, subject to capacity</li>
+          </ul>
+          <p class="note">On the content page this is FlowPilot AI’s Express Social Content Pack. A real-estate newsletter pilot is separate: scope and price are agreed by email before any work starts.</p>
+          <p><a class="btn" href="content/">Read the content pack page</a></p>
+        </article>
+        <aside class="side">
+          <h3>Student writing</h3>
+          <p class="note">Same Interac address, austyn.an@icloud.com. In the memo, put your name and the item. Then email flowpilot27@gmail.com with the item and the delivery email.</p>
+          <table class="menu">
+            <thead>
+              <tr><th scope="col">Item</th><th scope="col">Price</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Exam Cram</td><td>CA$17</td></tr>
+              <tr><td>Essay / citation help</td><td>CA$14</td></tr>
+              <tr><td>Bundle</td><td>CA$27</td></tr>
+              <tr><td>Citation &amp; Quote Bank</td><td>CA$11</td></tr>
+            </tbody>
+          </table>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="pay">
+    <div class="wrap">
+      <div class="pay">
+        <p class="kicker" style="color:#e7b089">03 — How to pay</p>
+        <h2>Interac e-Transfer for the CA$25 content pack.</h2>
+        <p class="intro">Payment is Interac only. Send it from your own bank. This website does not take cards and does not store payment details.</p>
+        <ol class="steps">
+          <li>
+            <b>1</b>
+            <p>Send <strong>CA$25</strong> by Interac e-Transfer to <strong>austyn.an@icloud.com</strong>.</p>
+          </li>
+          <li>
+            <b>2</b>
+            <p>Use this memo: <strong class="memo">YourName Content Pack</strong>. Replace YourName with your name.</p>
+          </li>
+          <li>
+            <b>3</b>
+            <p>Email <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a> with your brief and the email address where the work should be delivered.</p>
+          </li>
+        </ol>
+        <p class="fine">Work starts when the transfer arrives and the brief is in. Full offer details, the inquiry form, and the real-estate newsletter conversation are on the <a href="content/">content page</a>. Student items use the same Interac address; name the item in the memo and in the email.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div>
+        <p class="kicker">04 — Contact</p>
+        <h2>Write to FlowLyon.</h2>
+        <p class="lede" style="font-size:18px">Email <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a>. The form opens a message to FlowLyon in your email app. Nothing on this page is saved on a server.</p>
+        <p class="note">Use the form for a question, a brief, or to say which student item you want. Leave out passwords, card numbers, and banking sign-in details.</p>
+      </div>
+      <form id="contact-form" action="mailto:flowpilot27@gmail.com" method="post" enctype="text/plain">
+        <label>Your name
+          <input name="name" type="text" autocomplete="name" maxlength="120" required>
+        </label>
+        <label>Your email
+          <input name="reply" type="email" autocomplete="email" maxlength="160" required>
+        </label>
+        <label>What is this about?
+          <select name="topic">
+            <option>Express Content Pack (CA$25)</option>
+            <option>Exam Cram (CA$17)</option>
+            <option>Essay / citation help (CA$14)</option>
+            <option>Bundle (CA$27)</option>
+            <option>Citation &amp; Quote Bank (CA$11)</option>
+            <option>Real-estate newsletter pilot</option>
+            <option>A question about the free tools</option>
+          </select>
+        </label>
+        <label>Message
+          <textarea name="message" maxlength="2000" required placeholder="For a content pack: your business, audience, platform, topics, and tone. For a student item: what you need and where to send it."></textarea>
+        </label>
+        <button class="btn" type="submit">Open this message in my email</button>
+        <p class="form-note" id="feedback" role="status">If your email app does not open, write directly to flowpilot27@gmail.com.</p>
+      </form>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap foot">
+    <div>
+      <strong style="color:var(--ink)">FlowLyon</strong>
+      <p>flowlyon.com · Toronto &amp; the GTA</p>
+      <p class="socials">FlowPilot <a href="https://www.instagram.com/flowpilot.ca/">Instagram @_flow_pilot</a> <a href="https://x.com/_Flow_Pilot">X @_Flow_Pilot</a> <a href="https://www.linkedin.com/company/144090953">LinkedIn</a></p>
+      <p>© <span id="year">2026</span> FlowLyon · Austin (Lyòn Austyn)</p>
+    </div>
+    <p class="legal">Calculators are free educational estimates, not lending, legal, or tax advice. Confirm a purchase with a lender or other qualified professional. Questions: <a href="mailto:flowpilot27@gmail.com">flowpilot27@gmail.com</a>.</p>
+  </div>
+</footer>
+<script>
+document.getElementById('year').textContent = String(new Date().getFullYear());
+document.getElementById('contact-form').addEventListener('submit', function (event) {
+  event.preventDefault();
+  var form = event.currentTarget;
+  var data = new FormData(form);
+  var name = String(data.get('name') || '').trim();
+  var reply = String(data.get('reply') || '').trim();
+  var topic = String(data.get('topic') || '').trim();
+  var message = String(data.get('message') || '').trim();
+  var feedback = document.getElementById('feedback');
+  if (!name || !reply || !message) {
+    feedback.textContent = 'Add your name, email, and a short message first.';
+    return;
+  }
+  var body = [
+    'Hello FlowLyon,',
+    '',
+    'Name: ' + name,
+    'Email: ' + reply,
+    'About: ' + topic,
+    '',
+    message
+  ].join('\n');
+  feedback.textContent = 'Your email app should open. Review the message, then press Send. If nothing opens, write to flowpilot27@gmail.com.';
+  window.location.href = 'mailto:flowpilot27@gmail.com?subject=' + encodeURIComponent('FlowLyon — ' + topic) + '&body=' + encodeURIComponent(body);
+});
+</script>
+</body>
+</html>

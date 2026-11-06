@@ -2,6 +2,12 @@
 
 Free Canadian homebuyer planning tools maintained by FlowPilot.
 
+## FlowLyon storefront
+
+[`index.html`](index.html) is the FlowLyon homepage (intended domain flowlyon.com). GitHub Pages publishes this repository from [`.github/workflows/static.yml`](.github/workflows/static.yml) at https://austynan-cloud.github.io/flowpilot-home-tools/ .
+
+FlowLyon links to FlowPilot Mortgage Lab, the Home Tools calculators, and the Express Content Pack. The content pack is CA$25 by Interac e-Transfer to austyn.an@icloud.com, memo `YourName Content Pack`, then email flowpilot27@gmail.com. The offer page is [`content/index.html`](content/index.html). The mortgage payment calculator is [`mortgage-calculator.html`](mortgage-calculator.html).
+
 ## Use Mortgage Lab
 
 **[Open FlowPilot Mortgage Lab — free](https://flowpilot-mortgage-lab.netlify.app/)**
@@ -26,7 +32,8 @@ Mortgage Lab helps Canadian homebuyers explore mortgage payments and the financi
 ## Source and deployment
 
 - Mortgage Lab source: [`mortgage-lab/index.html`](mortgage-lab/index.html)
-- Original mortgage calculator: [`index.html`](index.html)
+- Original mortgage calculator: [`mortgage-calculator.html`](mortgage-calculator.html)
+- FlowLyon homepage: [`index.html`](index.html)
 - Ontario buyer tools: [Down-payment calculator](down-payment.html) and [land-transfer-tax calculator](land-transfer-tax.html)
 - Live Mortgage Lab: https://flowpilot-mortgage-lab.netlify.app/
 - A separate, smaller historical prototype is hosted elsewhere; the URL above is the primary project.
