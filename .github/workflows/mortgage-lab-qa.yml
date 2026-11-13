@@ -1,0 +1,26 @@
+name: Mortgage Lab regression QA
+on:
+  push:
+    paths:
+      - 'mortgage-lab/index.html'
+      - 'mortgage-lab/tests/**'
+      - '.github/workflows/mortgage-lab-qa.yml'
+  pull_request:
+    paths:
+      - 'mortgage-lab/index.html'
+      - 'mortgage-lab/tests/**'
+      - '.github/workflows/mortgage-lab-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  math-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run production-source calculator regression tests
+        run: node --test mortgage-lab/tests/test_site_math.cjs
