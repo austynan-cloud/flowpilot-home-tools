@@ -61,3 +61,24 @@ test('insurance model: 20% down zero premium; ineligible high-price insured case
  close(ctx.insurancePremium(500000,100000,25),0);
  assert.ok(Number.isNaN(ctx.insurancePremium(1500000,150000,25)));
 });
+
+test('CSV schedule export fields round to cents and reconcile to final payoff',()=>{
+ const s=ctx.simulate(520000,4.89,25,'monthly',0,0);
+ const lines=['Period,Year,Amount paid (CAD),Principal paid (CAD),Interest paid (CAD),Remaining balance (CAD)']
+  .concat(s.rows.map(r=>[r.period,r.year,r.paid.toFixed(2),r.principal.toFixed(2),r.interest.toFixed(2),r.balance.toFixed(2)].join(',')));
+ assert.equal(lines.length,s.rows.length+1);
+ assert.equal(lines[0].split(',').length,6);
+ for(const [i,line] of lines.slice(1).entries()){
+  const fields=line.split(',');
+  assert.equal(fields.length,6);
+  assert.equal(Number(fields[0]),i+1);
+  assert.ok(fields.slice(2).every(v=>/^\\d+\\.\\d{2}$/.test(v)));
+ }
+ close(Number(lines.at(-1).split(',')[5]),0);
+});
+test('mortgage balance never increases without new borrowing',()=>{
+ const s=ctx.simulate(400000,5,25,'accbiweekly',100,500);
+ let previous=400000;
+ for(const row of s.rows){assert.ok(row.balance<=previous+1e-8);previous=row.balance;}
+ close(previous,0);
+});
