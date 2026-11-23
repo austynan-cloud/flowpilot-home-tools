@@ -72,7 +72,7 @@ test('CSV schedule export fields round to cents and reconcile to final payoff',(
   const fields=line.split(',');
   assert.equal(fields.length,6);
   assert.equal(Number(fields[0]),i+1);
-  assert.ok(fields.slice(2).every(v=>/^\\d+\\.\\d{2}$/.test(v)));
+  assert.ok(fields.slice(2).every(v=>/^\d+\.\d{2}$/.test(v)));
  }
  close(Number(lines.at(-1).split(',')[5]),0);
 });
